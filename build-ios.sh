@@ -1,4 +1,5 @@
 #!/bin/bash
+# 一刻 cloud build entry; the existing iOS workflow calls this script.
 set -euo pipefail
 cd "$(dirname "$0")"
 python3 -m pip install --quiet --user Pillow
