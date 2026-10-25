@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#050617">
+  <title>一刻 · 连接云端</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#050617;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+    body{min-height:100dvh;display:grid;place-items:center;padding:calc(28px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));background:radial-gradient(circle at 15% 20%,#18213d 0,transparent 42%),radial-gradient(circle at 85% 78%,#102c32 0,transparent 38%),#050617}
+    .stars{position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle at 20px 30px,rgba(255,255,255,.8) 0 1px,transparent 1.6px),radial-gradient(circle at 105px 110px,rgba(155,216,201,.65) 0 1px,transparent 1.7px);background-size:180px 180px,260px 260px;animation:twinkle 3s ease-in-out infinite alternate}
+    .card{position:relative;width:min(100%,440px);padding:32px 26px;border:1px solid rgba(255,255,255,.2);border-radius:30px;background:rgba(15,23,42,.8);box-shadow:0 24px 70px rgba(0,0,0,.38);backdrop-filter:blur(16px)}
+    .mark{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#f8fafc;color:#050617;font-size:29px}.eyebrow{margin:24px 0 7px;color:#9bd8c9;font-size:10px;font-weight:700;letter-spacing:.2em}
+    h1{margin:0;font-size:34px;line-height:1.2}p{color:#b6c0d0;font-size:14px;line-height:1.8}form{display:grid;gap:13px;margin-top:26px}label{font-size:12px;font-weight:650}
+    input{width:100%;height:52px;padding:0 16px;border:1px solid rgba(255,255,255,.22);border-radius:17px;background:rgba(255,255,255,.09);color:#fff;font:inherit;font-size:14px;outline:none}
+    button{min-height:50px;border:0;border-radius:999px;background:#f8fafc;color:#050617;font:inherit;font-size:14px;font-weight:700;cursor:pointer}.secondary{margin-top:12px;background:rgba(255,255,255,.1);color:#f8fafc}.error{min-height:20px;margin:0;color:#fda4af}.hint,footer{font-size:12px}.host{overflow-wrap:anywhere;color:#9bd8c9;margin:20px 0}.saved{display:none}footer{margin-top:24px;color:#8994a8;text-align:center;line-height:1.8}
+    @keyframes twinkle{to{opacity:.45}}@media(prefers-reduced-motion:reduce){.stars{animation:none}}
+  </style>
+</head>
+<body>
+  <div class="stars" aria-hidden="true"></div>
+  <main class="card">
+    <div class="mark">一</div><p class="eyebrow">MOMENT · iOS</p>
+    <section id="setup">
+      <h1>连接你的「一刻」</h1>
+      <p>第一次使用，请填写已经发布的「一刻」公开网址。网址会保存在这台设备里，下次打开自动进入。</p>
+      <form id="url-form">
+        <label for="public-url">公开网址</label>
+        <input id="public-url" type="url" inputmode="url" autocomplete="url" placeholder="https://你的名字.ok.kimi.link" required>
+        <p class="error" id="error" role="alert"></p>
+        <button type="submit">保存并进入一刻</button>
+      </form>
+      <p class="hint">请填写完整网址，包括 https://。云端数据仍保存在你的「一刻」账号中。</p>
+    </section>
+    <section class="saved" id="saved">
+      <h1>正在回到「一刻」</h1><p>将打开已保存的云端地址。</p>
+      <div class="host" id="saved-host"></div>
+      <button id="enter-now" type="button">立即进入</button>
+      <button class="secondary" id="change-url" type="button">更改网址</button>
+    </section>
+    <footer>未签名 iOS 版本 · 需要连接互联网<br>网页版提醒与原生后台闹钟的能力有所不同</footer>
+  </main>
+  <script>
+    (() => {
+      const key="yike.publicUrl.v1",setup=document.getElementById("setup"),saved=document.getElementById("saved"),input=document.getElementById("public-url"),error=document.getElementById("error");
+      let timer;
+      function validate(value){
+        const url=new URL(value.trim()),validHost=url.hostname==="ok.kimi.link"||url.hostname.endsWith(".ok.kimi.link");
+        if(url.protocol!=="https:"||!validHost||url.username||url.password||url.search||url.hash)throw new Error("请输入有效的「一刻」公开网址，例如 https://名字.ok.kimi.link");
+        return url.origin+url.pathname.replace(/\/$/,"");
+      }
+      function enter(){clearTimeout(timer);const url=localStorage.getItem(key);if(url)window.location.replace(url)}
+      function showSaved(){const url=localStorage.getItem(key);if(!url)return;setup.style.display="none";saved.style.display="block";document.getElementById("saved-host").textContent=url;timer=setTimeout(enter,2200)}
+      document.getElementById("url-form").addEventListener("submit",event=>{event.preventDefault();error.textContent="";try{const url=validate(input.value);localStorage.setItem(key,url);window.location.assign(url)}catch(e){error.textContent=e.message||"网址格式不正确";input.focus()}});
+      document.getElementById("enter-now").addEventListener("click",enter);
+      document.getElementById("change-url").addEventListener("click",()=>{clearTimeout(timer);localStorage.removeItem(key);saved.style.display="none";setup.style.display="block";input.value="";input.focus()});
+      showSaved();
+    })();
+  </script>
+</body>
+</html>

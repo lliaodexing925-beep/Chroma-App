@@ -1,19 +1,19 @@
 {
-  "appId": "com.tareq.chromasmith",
-  "appName": "Chromasmith",
-  "webDir": "www",
-  "backgroundColor": "#141414",
+  "appId": "com.yike.moment",
+  "appName": "一刻",
+  "webDir": "public",
+  "backgroundColor": "#050617",
   "ios": {
-    "contentInset": "never",
-    "backgroundColor": "#141414"
+    "contentInset": "never"
   },
-  "android": {
-    "backgroundColor": "#141414"
-  },
-  "plugins": {
-    "SystemBars": {
-      "insetsHandling": "css",
-      "style": "DARK"
-    }
+  "server": {
+    "allowNavigation": [
+      "ok.kimi.link",
+      "*.ok.kimi.link",
+      "kimi.com",
+      "*.kimi.com",
+      "kimi.moonshot.cn",
+      "*.kimi.moonshot.cn"
+    ]
   }
 }
