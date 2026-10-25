@@ -10,6 +10,8 @@
     "allowNavigation": [
       "ok.kimi.link",
       "*.ok.kimi.link",
+      "kimi.site",
+      "*.kimi.site",
       "kimi.com",
       "*.kimi.com",
       "kimi.moonshot.cn",

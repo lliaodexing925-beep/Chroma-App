@@ -26,7 +26,7 @@
       <p>第一次使用，请填写已经发布的「一刻」公开网址。网址会保存在这台设备里，下次打开自动进入。</p>
       <form id="url-form">
         <label for="public-url">公开网址</label>
-        <input id="public-url" type="url" inputmode="url" autocomplete="url" placeholder="https://你的名字.ok.kimi.link" required>
+        <input id="public-url" type="url" inputmode="url" autocomplete="url" placeholder="https://你的名字.kimi.site" required>
         <p class="error" id="error" role="alert"></p>
         <button type="submit">保存并进入一刻</button>
       </form>
@@ -42,11 +42,11 @@
   </main>
   <script>
     (() => {
-      const key="yike.publicUrl.v1",setup=document.getElementById("setup"),saved=document.getElementById("saved"),input=document.getElementById("public-url"),error=document.getElementById("error");
+      const key="yike.publicUrl.v1",defaultUrl="https://fk7r34dc6j2de.kimi.site",setup=document.getElementById("setup"),saved=document.getElementById("saved"),input=document.getElementById("public-url"),error=document.getElementById("error");
       let timer;
       function validate(value){
-        const url=new URL(value.trim()),validHost=url.hostname==="ok.kimi.link"||url.hostname.endsWith(".ok.kimi.link");
-        if(url.protocol!=="https:"||!validHost||url.username||url.password||url.search||url.hash)throw new Error("请输入有效的「一刻」公开网址，例如 https://名字.ok.kimi.link");
+        const url=new URL(value.trim()),validHost=url.hostname==="ok.kimi.link"||url.hostname.endsWith(".ok.kimi.link")||url.hostname==="kimi.site"||url.hostname.endsWith(".kimi.site");
+        if(url.protocol!=="https:"||!validHost||url.username||url.password)throw new Error("请输入有效的「一刻」公开网址，例如 https://名字.kimi.site");
         return url.origin+url.pathname.replace(/\/$/,"");
       }
       function enter(){clearTimeout(timer);const url=localStorage.getItem(key);if(url)window.location.replace(url)}
@@ -54,6 +54,7 @@
       document.getElementById("url-form").addEventListener("submit",event=>{event.preventDefault();error.textContent="";try{const url=validate(input.value);localStorage.setItem(key,url);window.location.assign(url)}catch(e){error.textContent=e.message||"网址格式不正确";input.focus()}});
       document.getElementById("enter-now").addEventListener("click",enter);
       document.getElementById("change-url").addEventListener("click",()=>{clearTimeout(timer);localStorage.removeItem(key);saved.style.display="none";setup.style.display="block";input.value="";input.focus()});
+      if(!localStorage.getItem(key))localStorage.setItem(key,defaultUrl);
       showSaved();
     })();
   </script>
