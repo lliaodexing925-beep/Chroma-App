@@ -3,22 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#050617">
-  <title>一刻 · 连接云端</title>
+  <meta name="theme-color" content="#f2f2f2">
+  <title>一刻 · 正在进入</title>
   <style>
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#050617;color:#f8fafc;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
-    body{min-height:100dvh;display:grid;place-items:center;padding:calc(28px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));background:radial-gradient(circle at 15% 20%,#18213d 0,transparent 42%),radial-gradient(circle at 85% 78%,#102c32 0,transparent 38%),#050617}
-    .stars{position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle at 20px 30px,rgba(255,255,255,.8) 0 1px,transparent 1.6px),radial-gradient(circle at 105px 110px,rgba(155,216,201,.65) 0 1px,transparent 1.7px);background-size:180px 180px,260px 260px;animation:twinkle 3s ease-in-out infinite alternate}
-    .card{position:relative;width:min(100%,440px);padding:32px 26px;border:1px solid rgba(255,255,255,.2);border-radius:30px;background:rgba(15,23,42,.8);box-shadow:0 24px 70px rgba(0,0,0,.38);backdrop-filter:blur(16px)}
-    .mark{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#f8fafc;color:#050617;font-size:29px}.eyebrow{margin:24px 0 7px;color:#9bd8c9;font-size:10px;font-weight:700;letter-spacing:.2em}
-    h1{margin:0;font-size:34px;line-height:1.2}p{color:#b6c0d0;font-size:14px;line-height:1.8}form{display:grid;gap:13px;margin-top:26px}label{font-size:12px;font-weight:650}
-    input{width:100%;height:52px;padding:0 16px;border:1px solid rgba(255,255,255,.22);border-radius:17px;background:rgba(255,255,255,.09);color:#fff;font:inherit;font-size:14px;outline:none}
-    button{min-height:50px;border:0;border-radius:999px;background:#f8fafc;color:#050617;font:inherit;font-size:14px;font-weight:700;cursor:pointer}.secondary{margin-top:12px;background:rgba(255,255,255,.1);color:#f8fafc}.error{min-height:20px;margin:0;color:#fda4af}.hint,footer{font-size:12px}.host{overflow-wrap:anywhere;color:#9bd8c9;margin:20px 0}.saved{display:none}footer{margin-top:24px;color:#8994a8;text-align:center;line-height:1.8}
-    @keyframes twinkle{to{opacity:.45}}@media(prefers-reduced-motion:reduce){.stars{animation:none}}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#f2f2f2;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}
+    body{min-height:100dvh;display:grid;place-items:center;padding:calc(28px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom))}
+    .card{width:min(100%,440px);padding:32px 26px;border:1px solid #e2e2e6;border-radius:24px;background:#fff}
+    .mark{display:grid;place-items:center;width:58px;height:58px;border-radius:50%;background:#1d1d1f;color:#f5f5f7;font-size:29px}.eyebrow{margin:24px 0 7px;color:#417d54;font-size:10px;font-weight:700;letter-spacing:.2em}
+    h1{margin:0;font-size:32px;line-height:1.25;letter-spacing:-.03em}p{color:#6e6e73;font-size:14px;line-height:1.8}form{display:grid;gap:13px;margin-top:26px}label{font-size:12px;font-weight:650}
+    input{width:100%;height:52px;padding:0 16px;border:1px solid #d8d8dd;border-radius:14px;background:#f7f7f8;color:#1d1d1f;font:inherit;font-size:14px;outline:none}
+    input:focus{border-color:#417d54;outline:2px solid rgba(65,125,84,.18)}button{min-height:50px;border:0;border-radius:999px;background:#1d1d1f;color:#f5f5f7;font:inherit;font-size:14px;font-weight:700;cursor:pointer}.secondary{margin-top:12px;background:#f2f2f2;color:#1d1d1f}.error{min-height:20px;margin:0;color:#b84646}.hint,footer{font-size:12px}.host{overflow-wrap:anywhere;color:#417d54;margin:20px 0}.saved{display:none}footer{margin-top:24px;color:#6e6e73;text-align:center;line-height:1.8}
+    @media(prefers-color-scheme:dark){html,body{background:#000;color:#f5f5f7}.card{background:#1c1c1e;border-color:#38383d}.mark{background:#f5f5f7;color:#1d1d1f}input{background:#2c2c2e;border-color:#48484d;color:#f5f5f7}.secondary{background:#2c2c2e;color:#f5f5f7}}
   </style>
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
   <main class="card">
     <div class="mark">一</div><p class="eyebrow">MOMENT · iOS</p>
     <section id="setup">
@@ -38,7 +36,7 @@
       <button id="enter-now" type="button">立即进入</button>
       <button class="secondary" id="change-url" type="button">更改网址</button>
     </section>
-    <footer>未签名 iOS 版本 · 需要连接互联网<br>网页版提醒与原生后台闹钟的能力有所不同</footer>
+    <footer>未签名 iOS 版本 · 需要联网同步数据<br>开启通知后，提醒可由系统按时弹出</footer>
   </main>
   <script>
     (() => {
@@ -50,7 +48,7 @@
         return url.origin+url.pathname.replace(/\/$/,"");
       }
       function enter(){clearTimeout(timer);const url=localStorage.getItem(key);if(url)window.location.replace(url)}
-      function showSaved(){const url=localStorage.getItem(key);if(!url)return;setup.style.display="none";saved.style.display="block";document.getElementById("saved-host").textContent=url;timer=setTimeout(enter,2200)}
+      function showSaved(){const url=localStorage.getItem(key);if(!url)return;setup.style.display="none";saved.style.display="block";document.getElementById("saved-host").textContent=url;timer=setTimeout(enter,1600)}
       document.getElementById("url-form").addEventListener("submit",event=>{event.preventDefault();error.textContent="";try{const url=validate(input.value);localStorage.setItem(key,url);window.location.assign(url)}catch(e){error.textContent=e.message||"网址格式不正确";input.focus()}});
       document.getElementById("enter-now").addEventListener("click",enter);
       document.getElementById("change-url").addEventListener("click",()=>{clearTimeout(timer);localStorage.removeItem(key);saved.style.display="none";setup.style.display="block";input.value="";input.focus()});
