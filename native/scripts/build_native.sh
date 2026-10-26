@@ -8,6 +8,12 @@ exec > >(tee build-debug.log) 2>&1
 upload_debug_log() {
   status=$?
   trap - ERR
+  # 同时把错误尾部写入 Actions 注解，即使 Release 权限不可用也能诊断。
+  if [ -f build-debug.log ]; then
+    tail -60 build-debug.log | sed -e 's/%/%25/g' -e 's/\r/%0D/g' | while IFS= read -r line; do
+      echo "::error file=native/build-debug.log::${line}"
+    done
+  fi
   if [ -n "${GH_TOKEN:-}" ] && [ -f build-debug.log ]; then
     gh release create "native-debug-${GITHUB_RUN_ID:-local}" build-debug.log \
       --title "一刻原生版构建诊断 ${GITHUB_RUN_ID:-local}" \
