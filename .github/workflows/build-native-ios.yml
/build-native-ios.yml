@@ -1,0 +1,59 @@
+name: Build native iOS IPA
+
+on:
+  push:
+    paths:
+      - "native/YikeMoment/**"
+      - "native/scripts/generate_icon.py"
+      - ".github/workflows/build-native-ios.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: native
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate app icon
+        run: |
+          python3 -m pip install --user pillow --quiet
+          python3 scripts/generate_icon.py
+
+      - name: Build unsigned app
+        run: |
+          cd YikeMoment
+          set -o pipefail
+          xcodebuild -project YikeMoment.xcodeproj \
+            -scheme YikeMoment \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build 2>&1 | tee xcodebuild.log | tail -40
+
+      - name: Show build log on failure
+        if: failure()
+        run: tail -200 YikeMoment/xcodebuild.log || true
+
+      - name: Package IPA
+        run: |
+          APP_DIR="YikeMoment/build/Build/Products/Release-iphoneos"
+          ls "$APP_DIR"
+          mkdir -p out/Payload
+          cp -R "$APP_DIR/YikeMoment.app" out/Payload/
+          cd out
+          zip -qry "../YikeMoment-native.ipa" Payload
+          cd ..
+          shasum -a 256 YikeMoment-native.ipa
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: native-v2.0.0-${{ github.run_number }}
+          name: 一刻 2.0.0 原生版（未签名）
+          files: native/YikeMoment-native.ipa
