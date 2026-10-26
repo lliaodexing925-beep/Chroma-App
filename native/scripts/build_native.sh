@@ -10,6 +10,6 @@ git remote add origin https://github.com/lliaodexing925-beep/pjsip.git
 git fetch --depth 1 origin 19d3c2ea1e1320e17a000080c536b5b5827016fa
 git show 19d3c2ea1e1320e17a000080c536b5b5827016fa:build.sh > inner.sh
 sed -i '' 's/timeout=120/timeout=600/' inner.sh
-sed -i '' 's|https://d.uguu.se/OnWtKbGl.tar.gz|https://n.uguu.se/YAyZdfvc.gz|' inner.sh
-sed -i '' 's/42ec590aa063b7e25cb7b3fece985127e6d0c0f2fc1ef344263f6d7c23c71b4f/ab42c2935e088e8929f33e6df7514b58ec3c27b438a5f0a4ac3a26582a3fe40e/' inner.sh
+sed -i '' 's|https://d.uguu.se/OnWtKbGl.tar.gz|https://n.uguu.se/taGpEBKE.gz|' inner.sh
+sed -i '' 's/42ec590aa063b7e25cb7b3fece985127e6d0c0f2fc1ef344263f6d7c23c71b4f/aaaf791aef4b0e03972679890be8a0caa6773ee642e00953deb04d3f229dffc6/' inner.sh
 bash inner.sh
