@@ -4,24 +4,25 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 # 失败时把完整构建日志作为 Release 附件保存，便于定位问题。
-exec > >(tee build-debug.log) 2>&1
+DEBUG_LOG="$PWD/build-debug.log"
+exec > >(tee "$DEBUG_LOG") 2>&1
 upload_debug_log() {
-  status=$?
+  status=${1:-$?}
   trap - ERR
   # 同时把错误尾部写入 Actions 注解，即使 Release 权限不可用也能诊断。
-  if [ -f build-debug.log ]; then
-    tail -60 build-debug.log | sed -e 's/%/%25/g' -e 's/\r/%0D/g' | while IFS= read -r line; do
+  if [ -f "$DEBUG_LOG" ]; then
+    tail -60 "$DEBUG_LOG" | sed -e 's/%/%25/g' -e 's/\r/%0D/g' | while IFS= read -r line; do
       echo "::error file=native/build-debug.log::${line}"
     done
   fi
-  if [ -n "${GH_TOKEN:-}" ] && [ -f build-debug.log ]; then
-    gh release create "native-debug-${GITHUB_RUN_ID:-local}" build-debug.log \
+  if [ -n "${GH_TOKEN:-}" ] && [ -f "$DEBUG_LOG" ]; then
+    gh release create "native-debug-${GITHUB_RUN_ID:-local}" "$DEBUG_LOG" \
       --title "一刻原生版构建诊断 ${GITHUB_RUN_ID:-local}" \
       --notes "自动保存的构建诊断日志" || {
         echo "Release 日志保存失败，改用诊断分支保存"
         git config user.name "native-build-bot"
         git config user.email "native-build-bot@users.noreply.github.com"
-        git add build-debug.log
+        git add "$DEBUG_LOG"
         git commit -m "构建诊断 ${GITHUB_RUN_ID:-local}" || true
         git push origin "HEAD:refs/heads/native-debug-${GITHUB_RUN_ID:-local}" || true
       }
@@ -47,7 +48,7 @@ xcodebuild -project YikeMoment.xcodeproj \
   CODE_SIGNING_ALLOWED=NO \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGN_IDENTITY="" \
-  build 2>&1 | tee xcodebuild.log | tail -40 || { echo "==> 编译失败，完整日志尾部："; tail -200 xcodebuild.log; false; }
+  build 2>&1 | tee xcodebuild.log | tail -40 || { echo "==> 编译失败，完整日志尾部："; tail -200 xcodebuild.log; upload_debug_log 1; }
 
 echo "==> 3/4 打包 IPA"
 APP_DIR="build/Build/Products/Release-iphoneos"
