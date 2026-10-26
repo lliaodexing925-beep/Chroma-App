@@ -1,0 +1,16 @@
+name: Build native iOS IPA
+
+on: [push, workflow_dispatch]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and release
+        run: bash native/scripts/build_native.sh
