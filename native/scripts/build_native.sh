@@ -30,6 +30,8 @@ upload_debug_log() {
 }
 trap upload_debug_log ERR
 
+xcodebuild -version
+
 echo "==> 1/4 生成图标"
 python3 -c 'import PIL' 2>/dev/null || python3 -m pip install --user pillow --break-system-packages --quiet || python3 -m pip install --user pillow --quiet
 python3 scripts/generate_icon.py
