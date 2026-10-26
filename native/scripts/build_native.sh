@@ -11,7 +11,14 @@ upload_debug_log() {
   if [ -n "${GH_TOKEN:-}" ] && [ -f build-debug.log ]; then
     gh release create "native-debug-${GITHUB_RUN_ID:-local}" build-debug.log \
       --title "一刻原生版构建诊断 ${GITHUB_RUN_ID:-local}" \
-      --notes "自动保存的构建诊断日志" || true
+      --notes "自动保存的构建诊断日志" || {
+        echo "Release 日志保存失败，改用诊断分支保存"
+        git config user.name "native-build-bot"
+        git config user.email "native-build-bot@users.noreply.github.com"
+        git add build-debug.log
+        git commit -m "构建诊断 ${GITHUB_RUN_ID:-local}" || true
+        git push origin "HEAD:refs/heads/native-debug-${GITHUB_RUN_ID:-local}" || true
+      }
   fi
   exit "$status"
 }
