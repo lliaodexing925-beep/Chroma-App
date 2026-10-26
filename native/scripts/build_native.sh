@@ -3,6 +3,20 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# 失败时把完整构建日志作为 Release 附件保存，便于定位问题。
+exec > >(tee build-debug.log) 2>&1
+upload_debug_log() {
+  status=$?
+  trap - ERR
+  if [ -n "${GH_TOKEN:-}" ] && [ -f build-debug.log ]; then
+    gh release create "native-debug-${GITHUB_RUN_ID:-local}" build-debug.log \
+      --title "一刻原生版构建诊断 ${GITHUB_RUN_ID:-local}" \
+      --notes "自动保存的构建诊断日志" || true
+  fi
+  exit "$status"
+}
+trap upload_debug_log ERR
+
 echo "==> 1/4 生成图标"
 python3 -c 'import PIL' 2>/dev/null || python3 -m pip install --user pillow --break-system-packages --quiet || python3 -m pip install --user pillow --quiet
 python3 scripts/generate_icon.py
