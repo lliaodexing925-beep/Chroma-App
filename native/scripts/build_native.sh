@@ -47,7 +47,7 @@ xcodebuild -project YikeMoment.xcodeproj \
   CODE_SIGNING_ALLOWED=NO \
   CODE_SIGNING_REQUIRED=NO \
   CODE_SIGN_IDENTITY="" \
-  build 2>&1 | tee xcodebuild.log | tail -40 || { echo "==> 编译失败，完整日志尾部："; tail -200 xcodebuild.log; exit 1; }
+  build 2>&1 | tee xcodebuild.log | tail -40 || { echo "==> 编译失败，完整日志尾部："; tail -200 xcodebuild.log; false; }
 
 echo "==> 3/4 打包 IPA"
 APP_DIR="build/Build/Products/Release-iphoneos"
