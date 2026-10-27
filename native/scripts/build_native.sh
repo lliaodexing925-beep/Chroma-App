@@ -12,4 +12,10 @@ git show 19d3c2ea1e1320e17a000080c536b5b5827016fa:build.sh > inner.sh
 sed -i '' 's/timeout=120/timeout=600/' inner.sh
 sed -i '' 's|https://d.uguu.se/OnWtKbGl.tar.gz|https://n.uguu.se/taGpEBKE.gz|' inner.sh
 sed -i '' 's/42ec590aa063b7e25cb7b3fece985127e6d0c0f2fc1ef344263f6d7c23c71b4f/aaaf791aef4b0e03972679890be8a0caa6773ee642e00953deb04d3f229dffc6/' inner.sh
+python3 - <<'PY'
+p='inner.sh'
+s=open(p).read()
+s=s.replace('  xcrun simctl bootstatus "$UDID" -b\n', '  timeout 180 xcrun simctl bootstatus "$UDID" -b\n')
+open(p,'w').write(s)
+PY
 bash inner.sh
